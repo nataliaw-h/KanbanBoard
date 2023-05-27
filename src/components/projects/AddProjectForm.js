@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid
 import { serverTimestamp } from 'firebase/firestore'
 import './styles/AddProjectForm.css';
 
 const AddProjectForm = ({ onAddProject }) => {
   const [projectName, setProjectName] = useState('');
-  const [columns, setColumns] = useState([{ name: '', required: true }]);
+  const [columns, setColumns] = useState([{ id: uuidv4(), name: '', required: true }]); // Add id to initial column
 
   const handleProjectNameChange = (e) => {
     setProjectName(e.target.value);
@@ -18,7 +19,7 @@ const AddProjectForm = ({ onAddProject }) => {
 
   const addColumn = () => {
     if (columns.length < 6) {
-      setColumns([...columns, { name: '', required: false }]);
+      setColumns([...columns, { id: uuidv4(), name: '', required: false }]); // Add id to new column
     }
   };
 
@@ -38,7 +39,7 @@ const AddProjectForm = ({ onAddProject }) => {
     const newProject = {
       name: projectName,
       columns: columns.filter((column) => column.name.trim() !== ''),
-      createdAt: serverTimestamp(), // Add this line
+      createdAt: serverTimestamp(),
     };
 
     try {
@@ -48,7 +49,7 @@ const AddProjectForm = ({ onAddProject }) => {
     }
 
     setProjectName('');
-    setColumns([{ name: '', required: true }]);
+    setColumns([{ id: uuidv4(), name: '', required: true }]); // Add id to reset column
   };
 
 

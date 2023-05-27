@@ -13,6 +13,7 @@ import Home from './components/common/Home';
 import KanbanBoard from './components/kanban/KanbanBoard';
 import { auth, db } from './firebase'; 
 import { collection, query, orderBy, onSnapshot, addDoc, deleteDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
+import './App.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -81,8 +82,9 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="app-container">
       <Header isLoggedIn={isLoggedIn} email={email} onLogout={() => auth.signOut()} />
+      <div className="content">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<UserRegistrationForm />} />
@@ -94,6 +96,7 @@ function App() {
         <Route path="/projects/:projectId" element={<KanbanBoard />} />
         <Route path="/calendar" element={<Calendar />} />
       </Routes>
+      </div>
       <Footer />
     </div>
   );

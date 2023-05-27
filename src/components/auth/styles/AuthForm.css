@@ -1,0 +1,91 @@
+.auth-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 400px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.auth-form-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+label {
+  margin-right: 10px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 10px;
+  background-color: #004aad;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-group button:last-child {
+  margin-left: 10px;
+}
+
+.button-group button:hover {
+  background-color: #123769;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  margin-top: 10px;
+}
+
+.google-logo {
+  width: 20px; /* Adjust the width as desired */
+  height: 20px; /* Adjust the height as desired */
+  margin-right: 8px;
+}
+
+.google-login-button {
+  margin-top: 10px;
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #3476cc;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.google-login-button:hover {
+  background-color: #c53929;
+}

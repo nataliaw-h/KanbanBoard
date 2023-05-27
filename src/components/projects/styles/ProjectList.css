@@ -1,0 +1,80 @@
+body{
+    background-color: #f5f8fa;
+}
+
+.project-list {
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .project-list h2 {
+    color: #345995;
+  }
+  
+  .project-list p {
+    color: #677b8c;
+  }
+  
+  .project-item {
+    background-color: #ffffff;
+    border: 1px solid #d3dce6;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  .project-name {
+    font-weight: bold;
+    margin-right: 10px;
+    flex: 1;
+    font-size: 25px;
+    color:#345995;
+  }
+  
+  .project-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .project-actions a,
+  .project-actions button {
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .edit-project-button,
+  .view-kanban-board-button,
+  .add-project-button {
+    background-color: #345995;
+    margin: 5px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .delete-project-button {
+    background-color: rgb(112, 35, 35);
+    margin: 5px;
+    height: 30px;
+    font-size: 14px;
+  }
+  
+  .add-project-button {
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bolder;
+  }

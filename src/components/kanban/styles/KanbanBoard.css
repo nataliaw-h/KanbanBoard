@@ -1,0 +1,35 @@
+.kanban-board-container {
+    padding: 20px;
+  }
+  
+  .kanban-board-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .kanban-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px;
+  }
+  
+  .kanban-column {
+    background-color: #e6f0ff;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .kanban-column-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  .add-task-button {
+    background-color: #004aad;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  

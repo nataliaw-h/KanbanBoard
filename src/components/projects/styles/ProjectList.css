@@ -77,4 +77,5 @@ body{
     display: flex;
     align-items: center;
     font-weight: bolder;
+    margin: 30px;
   }

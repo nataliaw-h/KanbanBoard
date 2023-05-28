@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import './styles/KanbanBoard.css';
 import AddTaskForm from './AddTaskForm';
@@ -24,35 +24,39 @@ const KanbanBoard = () => {
   };
 
   useEffect(() => {
+    const fetchProject = async () => {
+      const projectDoc = doc(db, 'projects', projectId);
+      const projectSnapshot = await getDoc(projectDoc);
+      if (projectSnapshot.exists()) {
+        setProject({ id: projectSnapshot.id, ...projectSnapshot.data() });
+      } else {
+        console.log('No such document!');
+      }
+    };
     fetchProject();
-  }, [projectId]);
+}, [projectId]); // Include db here as it's used inside the effect.
+
 
   const handleOnDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
 
-    // Make a copy of project's columns and ensure items is always an array
     const newColumns = project.columns.map((column) => ({
       ...column,
       items: Array.isArray(column.items) ? [...column.items] : [],
     }));
 
-    // Find source and destination column indexes
     const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
     const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
 
-    // Remove the dragged item from source column items
     const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
-    // Add the dragged item to destination column items
     newColumns[destIndex].items.splice(destination.index, 0, removed);
 
-    // Update project's columns in state and Firestore
     setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
     await updateDoc(doc(db, 'projects', projectId), {
       columns: newColumns,
     });
 
-    // Fetch the project again to update the local state
     fetchProject();
   };
 
@@ -65,8 +69,7 @@ const KanbanBoard = () => {
       expirationDate: taskDetails.expirationDate,
     };
 
-    // Update the local state
-    await setProject((prevProject) => {
+    setProject((prevProject) => {
       const updatedColumns = prevProject.columns.map((column) => {
         if (column.id === columnId) {
           const items = Array.isArray(column.items) ? column.items : [];
@@ -82,14 +85,23 @@ const KanbanBoard = () => {
       return { ...prevProject, columns: updatedColumns };
     });
 
-    // Update Firestore
+    const updatedProject = {
+      ...project,
+      columns: project.columns.map(column => {
+        if (column.id === columnId) {
+          return { ...column, items: [...(column.items || []), newTask] };
+        } else {
+          return column;
+        }
+      })
+    };
+
     const projectDoc = doc(db, 'projects', projectId);
-    await updateDoc(projectDoc, project);
+    await updateDoc(projectDoc, updatedProject);
   };
 
   const handleEditTask = (taskId) => {
     if (editingTaskId === taskId) {
-      // Clicked on the same task again, toggle form visibility
       setEditingTaskId(null);
     } else {
       setEditingTaskId(taskId);
@@ -97,7 +109,6 @@ const KanbanBoard = () => {
   };
 
   const handleUpdateTask = async (updatedTask) => {
-    // Update the task in the project's columns
     const updatedColumns = project.columns.map((column) => {
       const updatedItems = column.items.map((item) => {
         if (item.id === updatedTask.id) {
@@ -109,7 +120,6 @@ const KanbanBoard = () => {
       return { ...column, items: updatedItems };
     });
 
-    // Update the project in state and Firestore
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
     await updateDoc(doc(db, 'projects', projectId), { columns: updatedColumns });
 
@@ -121,13 +131,11 @@ const KanbanBoard = () => {
   };
 
   const handleDeleteTask = async (taskId) => {
-    // Remove the task from the project's columns
     const updatedColumns = project.columns.map((column) => {
       const updatedItems = column.items.filter((item) => item.id !== taskId);
       return { ...column, items: updatedItems };
     });
 
-    // Update the project in state and Firestore
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
     await updateDoc(doc(db, 'projects', projectId), { columns: updatedColumns });
   };
@@ -144,6 +152,33 @@ const KanbanBoard = () => {
     const currentDate = new Date();
     const expirationDate = new Date(task.expirationDate);
     return expirationDate < currentDate;
+  };
+
+  const fileInputRef = useRef();
+
+  const handleExportData = async () => {
+    const dataStr = JSON.stringify(project);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'data.json';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleImportData = async (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = JSON.parse(e.target.result);
+      // update the data to Firestore
+      const projectDoc = doc(db, 'projects', projectId);
+      await updateDoc(projectDoc, data);
+      fetchProject();
+    };
+    reader.readAsText(file);
+    fileInputRef.current.value = '';
   };
 
   if (!project) {
@@ -196,7 +231,7 @@ const KanbanBoard = () => {
                                     <div className="task-expiration-date">
                                       {item.expirationDate}
                                     </div>
-                                    <div className="task-buttons">
+                                    <div className="button-container">
                                       <button
                                         className="update-task-button"
                                         onClick={() => handleEditTask(item.id)}
@@ -223,6 +258,11 @@ const KanbanBoard = () => {
               </Droppable>
             </div>
           ))}
+      </div>
+      <div className="button-container">
+        <button className="json-button" onClick={handleExportData}>Export Data</button>
+        <input type="file" accept=".json" onChange={handleImportData} ref={fileInputRef} style={{display: 'none'}} />
+        <button className="json-button" onClick={() => fileInputRef.current.click()}>Import Data</button>
       </div>
     </DragDropContext>
   );

@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import lottie from 'lottie-web';
 import animationData from './animation.json';
 import './styles/Home.css';
+import { withTranslation } from 'react-i18next';
 
-const Home = () => {
+const Home = ({ t }) => {
   const animationContainerRef = useRef(null);
   const [showAnimation, setShowAnimation] = useState(true);
   const [showText, setShowText] = useState(false);
@@ -36,12 +37,10 @@ const Home = () => {
         <div ref={animationContainerRef} id="animationContainer"></div>
       )}
       {showText && (
-        <p className="text-after-animation">
-          Welcome on KanBoard!
-        </p>
+        <p className="text-after-animation">{t('home.welcome')}</p>
       )}
     </div>
   );
 };
 
-export default Home;
+export default withTranslation()(Home);

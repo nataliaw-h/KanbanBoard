@@ -1,40 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { auth, db } from '../../firebase';
 import './styles/AddProjectForm.css';
 
 const EditProjectForm = ({ onEditProject }) => {
   const { projectId } = useParams();
-  const [projectName, setProjectName] = useState('');
-  const [columns, setColumns] = useState([]);
+  const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProject = async () => {
-      const projectDoc = doc(db, 'projects', projectId);
-      const projectSnapshot = await getDoc(projectDoc);
-      if (projectSnapshot.exists()) {
-        setProjectName(projectSnapshot.data().name);
-        setColumns(projectSnapshot.data().columns);
-      } else {
-        console.log('No such document!');
+      try {
+        const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
+        const projectSnapshot = await getDoc(projectDoc);
+        if (projectSnapshot.exists()) {
+          setProject({ id: projectId, ...projectSnapshot.data() });
+        } else {
+          console.log('No such project exists!');
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching project:', error);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchProject();
   }, [projectId]);
 
-  const handleColumnChange = (e, index) => {
-    const updatedColumns = [...columns];
-    updatedColumns[index].name = e.target.value;
-    setColumns(updatedColumns);
+  const handleProjectNameChange = (e) => {
+    setProject((prevProject) => ({
+      ...prevProject,
+      name: e.target.value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleColumnChange = (e, columnIndex) => {
+    const updatedColumns = [...project.columns];
+    updatedColumns[columnIndex].name = e.target.value;
+    setProject((prevProject) => ({
+      ...prevProject,
+      columns: updatedColumns,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onEditProject({ id: projectId, name: projectName, columns });
+    if (!project) return;
+
+    try {
+      await onEditProject(project);
+    } catch (error) {
+      console.error('Error editing project:', error);
+    }
   };
 
   if (isLoading) {
@@ -42,37 +61,35 @@ const EditProjectForm = ({ onEditProject }) => {
   }
 
   return (
-    <div className="add-project-form-container">
+    <form className="add-project-form-container" onSubmit={handleSubmit}>
       <h2>Edit Project</h2>
-      <form onSubmit={handleSubmit} className="add-project-form">
-      
-      <label htmlFor="projectName">Project Name:</label>
-      <div className="form-group">
-        <input
-          type="text"
-          name="projectName"
-          required
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          className="project-name-input"
-        /></div>
-        <label>Columns:</label>
         <div className="form-group">
-        {columns.map((column, index) => (
+          <label htmlFor="projectName">Project Name:</label>
           <input
-            key={index}
             type="text"
-            value={column.name}
-            onChange={(e) => handleColumnChange(e, index)}
-            className="column-input"
+            id="projectName"
+            value={project.name}
+            onChange={handleProjectNameChange}
             required
           />
-        ))}</div>
+        </div>
+        <div className="form-group">
+          <label>Columns:</label>
+          {project.columns.map((column, index) => (
+            <div key={index} className="column-input">
+              <input
+                type="text"
+                value={column.name}
+                onChange={(e) => handleColumnChange(e, index)}
+                required
+              />
+            </div>
+          ))}
+        </div>
         <div className="button-group">
-        <button type="submit">Update Project</button>
+          <button type="submit">Update Project</button>
         </div>
       </form>
-    </div>
   );
 };
 

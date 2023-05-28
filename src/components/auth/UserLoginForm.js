@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import './styles/AuthForm.css';
 import { auth, googleProvider } from '../../firebase'; // make sure the path is correct
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { Navigate } from 'react-router-dom';
+
 
 const UserLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,26 +23,31 @@ const UserLoginForm = () => {
 
     // Log in the user
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(() => {
         // User logged in successfully
         setEmail('');
         setPassword('');
         setErrorMessage('');
+        setIsAuthenticated(true);
       })
       .catch((e) => setErrorMessage(e.message));
   };
 
   const handleLoginWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
-      .then((result) => {
+      .then(() => {
         // User logged in successfully
-        const user = result.user;
-        console.log('Logged in with Google:', user);
+        setIsAuthenticated(true);
       })
       .catch((error) => {
         console.log('Error logging in with Google:', error);
       });
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
 
   return (
     <div className="auth-form-container">

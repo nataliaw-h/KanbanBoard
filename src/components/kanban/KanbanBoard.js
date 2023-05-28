@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { auth, db } from '../../firebase';
 import './styles/KanbanBoard.css';
 import AddTaskForm from './AddTaskForm';
 import EditTaskForm from './EditTaskForm';
@@ -14,7 +14,7 @@ const KanbanBoard = () => {
   const [editingTaskId, setEditingTaskId] = useState(null);
 
   const fetchProject = async () => {
-    const projectDoc = doc(db, 'projects', projectId);
+    const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
     const projectSnapshot = await getDoc(projectDoc);
     if (projectSnapshot.exists()) {
       setProject({ id: projectSnapshot.id, ...projectSnapshot.data() });
@@ -22,10 +22,11 @@ const KanbanBoard = () => {
       console.log('No such document!');
     }
   };
+  
 
   useEffect(() => {
     const fetchProject = async () => {
-      const projectDoc = doc(db, 'projects', projectId);
+      const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
       const projectSnapshot = await getDoc(projectDoc);
       if (projectSnapshot.exists()) {
         setProject({ id: projectSnapshot.id, ...projectSnapshot.data() });
@@ -34,31 +35,33 @@ const KanbanBoard = () => {
       }
     };
     fetchProject();
-}, [projectId]); // Include db here as it's used inside the effect.
+}, [projectId]);
 
 
-  const handleOnDragEnd = async (result) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
+const handleOnDragEnd = async (result) => {
+  if (!result.destination) return;
+  const { source, destination } = result;
 
-    const newColumns = project.columns.map((column) => ({
-      ...column,
-      items: Array.isArray(column.items) ? [...column.items] : [],
-    }));
+  const newColumns = project.columns.map((column) => ({
+    ...column,
+    items: Array.isArray(column.items) ? [...column.items] : [],
+  }));
 
-    const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
-    const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
+  const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
+  const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
 
-    const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
-    newColumns[destIndex].items.splice(destination.index, 0, removed);
+  const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
+  newColumns[destIndex].items.splice(destination.index, 0, removed);
 
-    setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
-    await updateDoc(doc(db, 'projects', projectId), {
-      columns: newColumns,
-    });
+  setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
 
-    fetchProject();
-  };
+  await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), {
+    columns: newColumns,
+  });
+
+  fetchProject();
+};
+
 
   const handleAddTask = async (columnId, taskDetails) => {
     const newTask = {
@@ -96,7 +99,7 @@ const KanbanBoard = () => {
       })
     };
 
-    const projectDoc = doc(db, 'projects', projectId);
+    const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
     await updateDoc(projectDoc, updatedProject);
   };
 
@@ -121,7 +124,7 @@ const KanbanBoard = () => {
     });
 
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
-    await updateDoc(doc(db, 'projects', projectId), { columns: updatedColumns });
+    await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
 
     setEditingTaskId(null);
   };
@@ -137,7 +140,7 @@ const KanbanBoard = () => {
     });
 
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
-    await updateDoc(doc(db, 'projects', projectId), { columns: updatedColumns });
+    await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
   };
 
   const isTaskNearDueDate = (task) => {
@@ -173,7 +176,7 @@ const KanbanBoard = () => {
     reader.onload = async (e) => {
       const data = JSON.parse(e.target.result);
       // update the data to Firestore
-      const projectDoc = doc(db, 'projects', projectId);
+      const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
       await updateDoc(projectDoc, data);
       fetchProject();
     };

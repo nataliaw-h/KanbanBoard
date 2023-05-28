@@ -13,6 +13,9 @@ import EditProjectForm from './components/projects/EditProjectForm';
 import Home from './components/common/Home';
 import KanbanBoard from './components/kanban/KanbanBoard';
 import { auth, db } from './firebase';
+import { Navigate } from 'react-router-dom';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+
 import {
   collection,
   query,
@@ -33,7 +36,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
         setEmail(user.email || '');
@@ -49,7 +52,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const projectsCollection = collection(db, 'projects');
+    if (!isLoggedIn) {
+      setProjects([]);
+      setTasks([]);
+      return;
+    }
+
+    const projectsCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
     const projectsQuery = query(projectsCollection, orderBy('createdAt'));
 
     const unsubscribeProjects = onSnapshot(projectsQuery, (snapshot) => {
@@ -60,13 +69,7 @@ function App() {
       setProjects(projectsData);
     });
 
-    return () => {
-      unsubscribeProjects();
-    };
-  }, []);
-
-  useEffect(() => {
-    const tasksCollection = collection(db, 'tasks');
+    const tasksCollection = collection(db, `users/${auth.currentUser.uid}/tasks`);
     const tasksQuery = query(tasksCollection, orderBy('expirationDate'));
 
     const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
@@ -78,13 +81,14 @@ function App() {
     });
 
     return () => {
+      unsubscribeProjects();
       unsubscribeTasks();
     };
-  }, []);
+  }, [isLoggedIn]);
 
   const handleAddProject = async (newProject) => {
     try {
-      await addDoc(collection(db, 'projects'), {
+      await addDoc(collection(db, `users/${auth.currentUser.uid}/projects`), {
         ...newProject,
         createdAt: Timestamp.fromDate(new Date()),
       });
@@ -95,7 +99,7 @@ function App() {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      await deleteDoc(doc(db, 'projects', projectId));
+      await deleteDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId));
     } catch (error) {
       console.error('Error deleting project:', error);
     }
@@ -103,29 +107,48 @@ function App() {
 
   const handleEditProject = async (updatedProject) => {
     try {
-      await updateDoc(doc(db, 'projects', updatedProject.id), updatedProject);
+      await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, updatedProject.id), updatedProject);
     } catch (error) {
       console.error('Error editing project:', error);
     }
   };
+  
 
   return (
     <div className="app-container">
-      <Header isLoggedIn={isLoggedIn} email={email} onLogout={() => auth.signOut()} />
+      <Header isLoggedIn={isLoggedIn} email={email} onLogout={() => signOut(auth)} />
       <div className="content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/register" element={<UserRegistrationForm />} />
-          <Route path="/login" element={<UserLoginForm />} />
-          <Route path="/logout" element={<LogoutButton />} />
+          <Route path="/register" element={isLoggedIn ? <Navigate to="/" /> : <UserRegistrationForm />} />
+          <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <UserLoginForm />} />
+          <Route path="/logout" element={isLoggedIn ? <LogoutButton /> : <Navigate to="/" />} />
           <Route
             path="/projects"
-            element={<ProjectList projects={projects} onDeleteProject={handleDeleteProject} />}
+            element={isLoggedIn ? <ProjectList projects={projects} onDeleteProject={handleDeleteProject} /> : <Navigate to="/login" />}
           />
-          <Route path="/projects/add" element={<AddProjectForm onAddProject={handleAddProject} />} />
-          <Route path="/projects/:projectId/edit" element={<EditProjectForm onEditProject={handleEditProject} />} />
-          <Route path="/projects/:projectId" element={<KanbanBoard />} />
-          <Route path="/calendar" element={<Calendar tasks={tasks} />} />
+          <Route
+            path="/projects/add"
+            element={isLoggedIn ? <AddProjectForm onAddProject={handleAddProject} /> : <Navigate to="/login" />}
+          />
+          <Route
+          path="/projects/:projectId/edit"
+          element={
+          isLoggedIn ? (
+          <EditProjectForm onEditProject={handleEditProject} />
+          ) : (
+          <Navigate to="/login" />
+          )
+          }
+          />
+          <Route
+            path="/projects/:projectId"
+            element={isLoggedIn ? <KanbanBoard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/calendar"
+            element={isLoggedIn ? <Calendar tasks={tasks} /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
       <Footer />

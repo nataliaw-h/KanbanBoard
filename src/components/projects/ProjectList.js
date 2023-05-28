@@ -10,6 +10,7 @@ const ProjectList = ({ projects, onDeleteProject, t }) => {
   const handleDeleteProject = (projectId) => {
     onDeleteProject(projectId);
   };
+  
 
   const handleSortChange = (event) => {
     setSortBy(event.target.value);

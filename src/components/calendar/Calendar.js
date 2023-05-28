@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import { db } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -12,7 +12,7 @@ const TaskCalendar = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const projectCollection = collection(db, 'projects');
+      const projectCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
       const projectSnapshot = await getDocs(projectCollection);
       
       let allTasks = [];

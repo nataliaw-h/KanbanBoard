@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { auth } from '../../firebase'; // make sure the path is correct
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import './styles/AuthForm.css';
 
 const UserRegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,6 +41,7 @@ const UserRegistrationForm = () => {
             setEmail('');
             setPassword('');
             setErrorMessage('');
+            setIsRegistered(true);
           })
           .catch((error) => {
             console.log('Error setting display name:', error);
@@ -51,6 +52,9 @@ const UserRegistrationForm = () => {
       });
   };
 
+  if (isRegistered) {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <div className="auth-form-container">
       <h2>Registration</h2>

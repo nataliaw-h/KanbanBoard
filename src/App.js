@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Header from './components/common/Header';
@@ -12,6 +11,7 @@ import AddProjectForm from './components/projects/AddProjectForm';
 import EditProjectForm from './components/projects/EditProjectForm';
 import Home from './components/common/Home';
 import KanbanBoard from './components/kanban/KanbanBoard';
+import NotificationsPage from './components/notification/NotificationsPage';
 import { auth, db } from './firebase';
 import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -34,6 +34,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -55,6 +56,7 @@ function App() {
     if (!isLoggedIn) {
       setProjects([]);
       setTasks([]);
+      setNotifications([]);
       return;
     }
 
@@ -80,9 +82,21 @@ function App() {
       setTasks(tasksData);
     });
 
+    const notificationsCollection = collection(db, `users/${auth.currentUser.uid}/notifications`);
+    const notificationsQuery = query(notificationsCollection);
+
+    const unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+      const notificationsData = [];
+      snapshot.forEach((doc) => {
+        notificationsData.push({ id: doc.id, ...doc.data() });
+      });
+      setNotifications(notificationsData);
+    });
+
     return () => {
       unsubscribeProjects();
       unsubscribeTasks();
+      unsubscribeNotifications();
     };
   }, [isLoggedIn]);
 
@@ -112,7 +126,6 @@ function App() {
       console.error('Error editing project:', error);
     }
   };
-  
 
   return (
     <div className="app-container">
@@ -148,6 +161,10 @@ function App() {
           <Route
             path="/calendar"
             element={isLoggedIn ? <Calendar tasks={tasks} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/notifications"
+            element={<NotificationsPage notifications={notifications}/>}
           />
         </Routes>
       </div>

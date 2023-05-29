@@ -89,3 +89,7 @@ input[type="password"] {
 .google-login-button:hover {
   background-color: #c53929;
 }
+
+.titile{
+  font-size: 20px;
+}

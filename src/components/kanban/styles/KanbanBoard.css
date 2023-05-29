@@ -175,6 +175,7 @@
     box-sizing: border-box;
     border-radius: 4px;
     border: 1px solid #ddd;
+    color: #00327a;
   }
   
   .validation-error {

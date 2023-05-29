@@ -11,6 +11,7 @@ const Header = ({ isLoggedIn, email, onLogout }) => {
           <Link to="/"><img src={logoImage} alt="Logo" className="logo" /></Link>
           <Link to="/projects">Projects</Link>
           <Link to="/calendar">Calendar</Link>
+          <Link to="/notifications">Notifications</Link>
         </div>
         <div className="right-section">
           {isLoggedIn ? (

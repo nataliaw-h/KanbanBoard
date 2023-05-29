@@ -37,7 +37,7 @@ const Home = ({ t }) => {
         <div ref={animationContainerRef} id="animationContainer"></div>
       )}
       {showText && (
-        <p className="text-after-animation">{t('home.welcome')}</p>
+        <p className="text-after-animation" >{t('home.welcome')}</p>
       )}
     </div>
   );

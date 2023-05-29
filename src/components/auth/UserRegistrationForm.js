@@ -57,7 +57,7 @@ const UserRegistrationForm = () => {
   }
   return (
     <div className="auth-form-container">
-      <h2>Registration</h2>
+      <h2 className='title'>Registration</h2>
       <form onSubmit={handleSubmit}>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <div className="form-group">

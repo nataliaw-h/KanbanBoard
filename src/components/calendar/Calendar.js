@@ -14,15 +14,15 @@ const TaskCalendar = () => {
     const fetchTasks = async () => {
       const projectCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
       const projectSnapshot = await getDocs(projectCollection);
-      
+
       let allTasks = [];
-      projectSnapshot.docs.forEach(doc => {
+      projectSnapshot.docs.forEach((doc) => {
         const projectData = doc.data();
         if (projectData.columns) {
-          projectData.columns.forEach(column => {
+          projectData.columns.forEach((column) => {
             if (column.items) {
-              column.items.forEach(item => {
-                const date = moment(item.expirationDate, "YYYY-MM-DD");
+              column.items.forEach((item) => {
+                const date = moment(item.expirationDate, 'YYYY-MM-DD');
                 allTasks.push({
                   id: item.id,
                   title: item.name,
@@ -34,22 +34,26 @@ const TaskCalendar = () => {
           });
         }
       });
-      
+
       setTasks(allTasks);
     };
-    
+
     fetchTasks();
   }, []);
 
   return (
-    <div>
-      <Calendar 
-        localizer={localizer}
-        events={tasks}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-      />
+    <div className="flex justify-center items-center h-screen bg-blue-200">
+      <div className="w-1/2 p-4 rounded-lg bg-blue-400">
+        <Calendar
+          localizer={localizer}
+          events={tasks}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
+          views={['month']}
+          defaultView="month"
+        />
+      </div>
     </div>
   );
 };

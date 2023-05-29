@@ -51,7 +51,7 @@ const UserLoginForm = () => {
 
   return (
     <div className="auth-form-container">
-      <h2>Login</h2>
+      <h2 className='title'>Login</h2>
       <form onSubmit={handleSubmit}>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <div className="form-group">

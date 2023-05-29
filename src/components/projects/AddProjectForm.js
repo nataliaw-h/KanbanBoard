@@ -55,7 +55,7 @@ const AddProjectForm = ({ onAddProject }) => {
 
   return (
     <form className="add-project-form-container" onSubmit={handleSubmit}>
-      <h2>Add Project</h2>
+      <h2 className='title'>Add Project</h2>
       <div className="form-group">
         <label htmlFor="projectName">Project Name:</label>
         <input

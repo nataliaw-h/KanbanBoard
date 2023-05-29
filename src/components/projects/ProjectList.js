@@ -38,7 +38,7 @@ const ProjectList = ({ projects, onDeleteProject, t }) => {
 
   return (
     <div className="project-list">
-      <h2>{t('projectList.title')}</h2>
+      <h1 className="title">{t('projectList.title')}</h1>
       <div className="filter-sort-container">
         <div className="filter-container">
           <label htmlFor="filter">{t('projectList.filterByName')}:</label>

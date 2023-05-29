@@ -9,7 +9,7 @@ import i18n from './i18n';
 ReactDOM.render(
   <BrowserRouter>
     <I18nextProvider i18n={i18n}>
-      <App />
+          <App />
     </I18nextProvider>
   </BrowserRouter>,
   document.getElementById('root')

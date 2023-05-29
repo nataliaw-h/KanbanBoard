@@ -9,6 +9,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     text-align: center;
+    margin: 5px;
   }
   
   .add-project-form-container h2 {
@@ -21,7 +22,7 @@
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 15px;
-    padding-right: 16px;
+    padding-right: 5px;
   }
   
   .add-project-form-container label {
@@ -44,29 +45,29 @@
   
   .add-project-form-container .column-input input {
     flex: 1;
-    margin-right: 10px;
   }
   
   .add-project-form-container .column-input button,
   .add-project-form-container .add-column-button,
   .add-project-form-container .add-project-button {
-    padding: 8px 12px;
+    padding: 12px 12px;
     background-color: #004aad;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    align-items: center;
   }
   
   .add-project-form-container .column-input .remove-button {
     padding: 0;
-    margin-left: 10px;
+    margin-left: 15px;
     background: none;
     border: none;
     color: #f00;
     font-weight: bold;
     cursor: pointer;
-    text-decoration: none; /* Usunięcie podkreślenia */
+    text-decoration: none;
   }
   
   .add-project-form-container .add-column-button {
@@ -79,7 +80,7 @@
     color: #004aad;
     font-weight: bold;
     cursor: pointer;
-    text-decoration: none; /* Usunięcie podkreślenia */
+    text-decoration: none;
   }
   
   .add-project-form-container .add-column-button::before {
@@ -88,10 +89,15 @@
   }
   
   .add-project-form-container .button-group {
-    display: flex;
-    justify-content: space-between;
     margin-top: 10px;
     width: 80%;
     padding: 10px;
+    margin-left: 10px;
+
   }
+
+  .title{
+    font-size: 20px;
+  }
+
   

@@ -62,7 +62,7 @@ const EditProjectForm = ({ onEditProject }) => {
 
   return (
     <form className="add-project-form-container" onSubmit={handleSubmit}>
-      <h2>Edit Project</h2>
+      <h2 className='title'>Edit Project</h2>
         <div className="form-group">
           <label htmlFor="projectName">Project Name:</label>
           <input

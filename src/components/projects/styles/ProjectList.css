@@ -5,6 +5,7 @@ body{
 .project-list {
     padding: 20px;
     border-radius: 5px;
+    font-size: 15px;
   }
   
   .project-list h2 {
@@ -78,4 +79,12 @@ body{
     align-items: center;
     font-weight: bolder;
     margin: 30px;
+  }
+  .sort-container,
+  .filter-container{
+    margin: 20px;
+  }
+
+  .title{
+    font-size: 20px;
   }

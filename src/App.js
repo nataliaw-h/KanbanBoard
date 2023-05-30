@@ -164,7 +164,7 @@ function App() {
           />
           <Route
             path="/notifications"
-            element={<NotificationsPage notifications={notifications}/>}
+            element={isLoggedIn ? <NotificationsPage notifications={notifications} /> : <Navigate to="/login" />}
           />
         </Routes>
       </div>

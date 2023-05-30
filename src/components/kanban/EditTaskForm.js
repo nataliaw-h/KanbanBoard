@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaRegStar, FaStar } from 'react-icons/fa';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const EditTaskForm = ({ task, onUpdate, onCancel }) => {
+  const [taskPriority, setTaskPriority] = useState(task.priority);
+
   const validationSchema = Yup.object().shape({
     taskName: Yup.string().required('Task name is required.'),
     taskDescription: Yup.string().required('Task description is required.'),
@@ -15,7 +17,7 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
       ...task,
       name: values.taskName,
       description: values.taskDescription,
-      priority: values.taskPriority,
+      priority: taskPriority,
       expirationDate: values.taskExpirationDate,
     });
   };
@@ -23,10 +25,10 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
-      if (i <= task.priority) {
-        stars.push(<FaStar key={i} className="star" />);
+      if (i <= taskPriority) {
+        stars.push(<FaStar key={i} className="star" onClick={() => setTaskPriority(i)} />);
       } else {
-        stars.push(<FaRegStar key={i} className="star" />);
+        stars.push(<FaRegStar key={i} className="star" onClick={() => setTaskPriority(i)} />);
       }
     }
     return stars;

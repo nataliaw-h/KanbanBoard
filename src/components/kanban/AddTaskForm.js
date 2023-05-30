@@ -7,6 +7,7 @@ const AddTaskForm = ({ columnId, onAdd }) => {
   const [taskPriority, setTaskPriority] = useState(1);
   const [taskExpirationDate, setTaskExpirationDate] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [showForm, setShowForm] = useState(false); // State to manage form visibility
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -26,6 +27,7 @@ const AddTaskForm = ({ columnId, onAdd }) => {
     setTaskPriority(1);
     setTaskExpirationDate('');
     setValidationError('');
+    setShowForm(false); // Hide the form after submitting
   };
 
   const renderStars = () => {
@@ -44,39 +46,50 @@ const AddTaskForm = ({ columnId, onAdd }) => {
     return stars;
   };
 
+  const handleToggleForm = () => {
+    setShowForm(!showForm); // Toggle form visibility
+  };
+
   return (
-    <form className="add-task-form" onSubmit={handleSubmit}>
-      <input
-        className="input-field"
-        type="text"
-        value={taskName}
-        onChange={(e) => setTaskName(e.target.value)}
-        placeholder="Enter task name"
-        maxLength="100"
-      />
-      <textarea
-        className="input-field"
-        value={taskDescription}
-        onChange={(e) => setTaskDescription(e.target.value)}
-        placeholder="Enter task description"
-        maxLength="500"
-        rows="4"
-      />
-      <input
-        className="input-field"
-        type="date"
-        value={taskExpirationDate}
-        onChange={(e) => setTaskExpirationDate(e.target.value)}
-        placeholder="Enter task expiration date"
-      />
-      <div className="stars">{renderStars()}</div>
-      <div className="button-container">
-        <button type="submit" className="add-task-button">
-          Add Task
-        </button>
-      </div>
-      {validationError && <div className="validation-error">{validationError}</div>}
-    </form>
+    <div>
+      <button onClick={handleToggleForm}>
+        {showForm ? 'Hide Form' : 'Add Task'} {/* Toggle button text */}
+      </button>
+      {showForm && (
+        <form className="add-task-form" onSubmit={handleSubmit}>
+          <input
+            className="input-field"
+            type="text"
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+            placeholder="Enter task name"
+            maxLength="100"
+          />
+          <textarea
+            className="input-field"
+            value={taskDescription}
+            onChange={(e) => setTaskDescription(e.target.value)}
+            placeholder="Enter task description"
+            maxLength="500"
+            rows="4"
+          />
+          <input
+            className="input-field"
+            type="date"
+            value={taskExpirationDate}
+            onChange={(e) => setTaskExpirationDate(e.target.value)}
+            placeholder="Enter task expiration date"
+          />
+          <div className="stars">{renderStars()}</div>
+          <div className="button-container">
+            <button type="submit" className="add-task-button">
+              Add Task
+            </button>
+          </div>
+          {validationError && <div className="validation-error">{validationError}</div>}
+        </form>
+      )}
+    </div>
   );
 };
 

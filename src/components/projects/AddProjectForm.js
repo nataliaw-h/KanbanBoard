@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid
-import { serverTimestamp } from 'firebase/firestore'
+import { serverTimestamp } from 'firebase/firestore';
 import './styles/AddProjectForm.css';
 
 const AddProjectForm = ({ onAddProject }) => {
@@ -44,6 +44,7 @@ const AddProjectForm = ({ onAddProject }) => {
 
     try {
       await onAddProject(newProject);
+      alert('Project added successfully!');
     } catch (error) {
       console.error('Error adding project:', error);
     }
@@ -52,19 +53,12 @@ const AddProjectForm = ({ onAddProject }) => {
     setColumns([{ id: uuidv4(), name: '', required: true }]); // Add id to reset column
   };
 
-
   return (
     <form className="add-project-form-container" onSubmit={handleSubmit}>
-      <h2 className='title'>Add Project</h2>
+      <h2 className="title">Add Project</h2>
       <div className="form-group">
         <label htmlFor="projectName">Project Name:</label>
-        <input
-          type="text"
-          id="projectName"
-          value={projectName}
-          onChange={handleProjectNameChange}
-          required
-        />
+        <input type="text" id="projectName" value={projectName} onChange={handleProjectNameChange} required />
       </div>
       <div className="form-group">
         <label>Columns:</label>
@@ -77,11 +71,7 @@ const AddProjectForm = ({ onAddProject }) => {
               required={column.required}
             />
             {index > 0 && (
-              <button
-                type="button"
-                className="remove-button"
-                onClick={() => removeColumn(index)}
-              >
+              <button type="button" className="remove-button" onClick={() => removeColumn(index)}>
                 &minus;
               </button>
             )}

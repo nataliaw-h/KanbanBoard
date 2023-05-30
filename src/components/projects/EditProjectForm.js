@@ -51,6 +51,7 @@ const EditProjectForm = ({ onEditProject }) => {
 
     try {
       await onEditProject(project);
+      alert('Project updated successfully!');
     } catch (error) {
       console.error('Error editing project:', error);
     }
@@ -62,34 +63,34 @@ const EditProjectForm = ({ onEditProject }) => {
 
   return (
     <form className="add-project-form-container" onSubmit={handleSubmit}>
-      <h2 className='title'>Edit Project</h2>
-        <div className="form-group">
-          <label htmlFor="projectName">Project Name:</label>
-          <input
-            type="text"
-            id="projectName"
-            value={project.name}
-            onChange={handleProjectNameChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Columns:</label>
-          {project.columns.map((column, index) => (
-            <div key={index} className="column-input">
-              <input
-                type="text"
-                value={column.name}
-                onChange={(e) => handleColumnChange(e, index)}
-                required
-              />
-            </div>
-          ))}
-        </div>
-        <div className="button-group">
-          <button type="submit">Update Project</button>
-        </div>
-      </form>
+      <h2 className="title">Edit Project</h2>
+      <div className="form-group">
+        <label htmlFor="projectName">Project Name:</label>
+        <input
+          type="text"
+          id="projectName"
+          value={project.name}
+          onChange={handleProjectNameChange}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label>Columns:</label>
+        {project.columns.map((column, index) => (
+          <div key={index} className="column-input">
+            <input
+              type="text"
+              value={column.name}
+              onChange={(e) => handleColumnChange(e, index)}
+              required
+            />
+          </div>
+        ))}
+      </div>
+      <div className="button-group">
+        <button type="submit">Update Project</button>
+      </div>
+    </form>
   );
 };
 

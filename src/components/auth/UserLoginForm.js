@@ -1,47 +1,29 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './styles/AuthForm.css';
-import { auth, googleProvider } from '../../firebase'; // make sure the path is correct
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { Navigate } from 'react-router-dom';
-
+import useAuth from '../hooks/useAuth'; // make sure the path is correct
+import './styles/AuthForm.css'
 
 const UserLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { signIn, signInWithGoogle, errorMessage } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate the form fields
-    if (!email || !password) {
-      setErrorMessage('Please enter your email and password.');
-      return;
+    const { success } = await signIn(email, password);
+    if (success) {
+      setIsAuthenticated(true);
     }
-
-    // Log in the user
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        // User logged in successfully
-        setEmail('');
-        setPassword('');
-        setErrorMessage('');
-        setIsAuthenticated(true);
-      })
-      .catch((e) => setErrorMessage(e.message));
   };
 
-  const handleLoginWithGoogle = () => {
-    signInWithPopup(auth, googleProvider)
-      .then(() => {
-        // User logged in successfully
-        setIsAuthenticated(true);
-      })
-      .catch((error) => {
-        console.log('Error logging in with Google:', error);
-      });
+  const handleLoginWithGoogle = async () => {
+    const { success } = await signInWithGoogle();
+    if (success) {
+      setIsAuthenticated(true);
+    }
   };
 
   if (isAuthenticated) {
@@ -77,7 +59,7 @@ const UserLoginForm = () => {
         <div className="button-group">
           <button type="submit" className="login-button">Login</button>
           <Link to="/register" className="sign-in-link">
-            <button className="sign-in-button">Sign In</button>
+            <button className="sign-in-button">Register</button>
           </Link>
         </div>
         <div>

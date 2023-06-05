@@ -5,7 +5,7 @@
     "home.welcome": "Witamy na KanBoard!",
     "home.description": "To jest opis aplikacji.",
     "projectList.title": "Lista Projektów",
-    "projectList.noProjects": "Brak dostępnych projektów",
+    "projectList.noProjectsAvailable": "Brak dostępnych projektów",
     "projectList.addProject": "Dodaj Projekt",
     "projectList.filterByName": "Filtruj według nazwy",
     "projectList.enterProjectName": "Wprowadź nazwę projektu",

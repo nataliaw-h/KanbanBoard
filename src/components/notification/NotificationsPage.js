@@ -2,12 +2,10 @@ import React, { useReducer, useCallback, useMemo, useLayoutEffect, useState } fr
 import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 
-// Define the actions.
 const ACTIONS = {
   SET_TASKS: 'set-tasks',
 };
 
-// Define the reducer function.
 const reducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.SET_TASKS:
@@ -20,7 +18,7 @@ const reducer = (state, action) => {
 const NotificationsPage = () => {
   const initialState = { tasks: [] };
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [filter, setFilter] = useState('all'); // The filter state.
+  const [filter, setFilter] = useState('all');
 
   const fetchTasks = useCallback(() => {
     let unsubscribe;
@@ -49,10 +47,8 @@ const NotificationsPage = () => {
         return { ...task, daysDifference, isExpired };
       });
 
-      // Sort tasks by daysDifference in ascending order
       filteredTasks.sort((a, b) => a.daysDifference - b.daysDifference);
 
-      // Dispatch action to set tasks.
       dispatch({ type: ACTIONS.SET_TASKS, payload: filteredTasks });
     });
     return unsubscribe;

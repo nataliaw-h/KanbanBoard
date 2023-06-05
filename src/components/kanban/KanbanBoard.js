@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -13,7 +13,7 @@ const KanbanBoard = () => {
   const [project, setProject] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
 
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
     const projectSnapshot = await getDoc(projectDoc);
     if (projectSnapshot.exists()) {
@@ -21,21 +21,11 @@ const KanbanBoard = () => {
     } else {
       console.log('No such document!');
     }
-  };
-  
+  }, [projectId]);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
-      const projectSnapshot = await getDoc(projectDoc);
-      if (projectSnapshot.exists()) {
-        setProject({ id: projectSnapshot.id, ...projectSnapshot.data() });
-      } else {
-        console.log('No such document!');
-      }
-    };
     fetchProject();
-}, [projectId]);
+  }, [fetchProject]);
 
 
 const handleOnDragEnd = async (result) => {
@@ -113,21 +103,22 @@ const handleOnDragEnd = async (result) => {
 
   const handleUpdateTask = async (updatedTask) => {
     const updatedColumns = project.columns.map((column) => {
-      const updatedItems = column.items.map((item) => {
+      const updatedItems = column.items ? column.items.map((item) => {
         if (item.id === updatedTask.id) {
           return updatedTask;
         }
         return item;
-      });
-
+      }) : [];
+  
       return { ...column, items: updatedItems };
     });
-
+  
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
     await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
-
+  
     setEditingTaskId(null);
   };
+  
 
   const handleCancelEdit = () => {
     setEditingTaskId(null);

@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { auth } from '../../firebase'; // make sure the path is correct
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import useAuth from '../hooks/useAuth'; 
+import './styles/AuthForm.css';
 
 const UserRegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // Define setErrorMessage
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { signUp } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check for required fields
-    if (!username || !email || !password) {
-      setErrorMessage('Please enter all required fields.');
-      return;
-    }
-
     // Validate password
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
     if (!passwordRegex.test(password)) {
@@ -28,28 +23,12 @@ const UserRegistrationForm = () => {
       return;
     }
 
-    // Register the new user
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Set the display name
-        updateProfile(userCredential.user, {
-          displayName: username,
-        })
-          .then(() => {
-            // User created and display name set successfully
-            setUsername('');
-            setEmail('');
-            setPassword('');
-            setErrorMessage('');
-            setIsRegistered(true);
-          })
-          .catch((error) => {
-            console.log('Error setting display name:', error);
-          });
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      });
+    const { success, error } = await signUp(username, email, password);
+    if (success) {
+      setIsRegistered(true);
+    } else if (error) {
+      setErrorMessage(error); // Set error message if there's an error
+    }
   };
 
   if (isRegistered) {

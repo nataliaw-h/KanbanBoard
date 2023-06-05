@@ -28,7 +28,13 @@ const Home = ({ t }) => {
 
   const handleAnimationComplete = () => {
     setShowAnimation(false);
-    setShowText(true);
+    // Delay the text display using a Promise and setTimeout
+    const delay = new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
+    delay.then(() => {
+      setShowText(true);
+    });
   };
 
   return (
@@ -37,7 +43,7 @@ const Home = ({ t }) => {
         <div ref={animationContainerRef} id="animationContainer"></div>
       )}
       {showText && (
-        <p className="text-after-animation" >{t('home.welcome')}</p>
+        <p className="text-after-animation">{t('home.welcome')}</p>
       )}
     </div>
   );

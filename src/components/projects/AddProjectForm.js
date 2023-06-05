@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { serverTimestamp } from 'firebase/firestore';
-import './styles/AddProjectForm.css';
+import { ProjectContext } from './ProjectContext';
+import './styles/ProjectForm.css';
+import { withTranslation } from 'react-i18next';
 
-const AddProjectForm = ({ onAddProject }) => {
+const AddProjectForm = ({ t }) => {
+  const { handleAddProject } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState('');
   const [columns, setColumns] = useState([{ id: uuidv4(), name: '', required: true }]);
 
@@ -43,8 +46,8 @@ const AddProjectForm = ({ onAddProject }) => {
     };
 
     try {
-      await onAddProject(newProject);
-      alert('Project added successfully!');
+      await handleAddProject(newProject);
+      alert(t('addProjectForm.projectAdded'));
     } catch (error) {
       console.error('Error adding project:', error);
     }
@@ -55,13 +58,13 @@ const AddProjectForm = ({ onAddProject }) => {
 
   return (
     <form className="add-project-form-container" onSubmit={handleSubmit}>
-      <h2 className="title">Add Project</h2>
+      <h2 className="title">{t('addProjectForm.addProject')}</h2>
       <div className="form-group">
-        <label htmlFor="projectName">Project Name:</label>
+        <label htmlFor="projectName">{t('addProjectForm.projectName')}:</label>
         <input type="text" id="projectName" value={projectName} onChange={handleProjectNameChange} required />
       </div>
       <div className="form-group">
-        <label>Columns:</label>
+        <label>{t('addProjectForm.columns')}:</label>
         {columns.map((column, index) => (
           <div key={index} className="column-input">
             <input
@@ -78,14 +81,14 @@ const AddProjectForm = ({ onAddProject }) => {
           </div>
         ))}
         <button type="button" className="add-column-button" onClick={addColumn}>
-          Add Column
+          {t('addProjectForm.addColumn')}
         </button>
       </div>
       <div className="button-group">
-        <button type="submit">Add Project</button>
+        <button type="submit">{t('addProjectForm.addProject')}</button>
       </div>
     </form>
   );
 };
 
-export default AddProjectForm;
+export default withTranslation()(AddProjectForm);

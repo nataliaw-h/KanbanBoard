@@ -7,8 +7,9 @@ import './styles/KanbanBoard.css';
 import AddTaskForm from './AddTaskForm';
 import EditTaskForm from './EditTaskForm';
 import { FaStar } from 'react-icons/fa';
+import { withTranslation } from 'react-i18next';
 
-const KanbanBoard = () => {
+const KanbanBoard = ({ t }) => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -28,29 +29,29 @@ const KanbanBoard = () => {
   }, [fetchProject]);
 
 
-const handleOnDragEnd = async (result) => {
-  if (!result.destination) return;
-  const { source, destination } = result;
+  const handleOnDragEnd = async (result) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
 
-  const newColumns = project.columns.map((column) => ({
-    ...column,
-    items: Array.isArray(column.items) ? [...column.items] : [],
-  }));
+    const newColumns = project.columns.map((column) => ({
+      ...column,
+      items: Array.isArray(column.items) ? [...column.items] : [],
+    }));
 
-  const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
-  const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
+    const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
+    const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
 
-  const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
-  newColumns[destIndex].items.splice(destination.index, 0, removed);
+    const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
+    newColumns[destIndex].items.splice(destination.index, 0, removed);
 
-  setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
+    setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
 
-  await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), {
-    columns: newColumns,
-  });
+    await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), {
+      columns: newColumns,
+    });
 
-  fetchProject();
-};
+    fetchProject();
+  };
 
 
   const handleAddTask = async (columnId, taskDetails) => {
@@ -109,16 +110,16 @@ const handleOnDragEnd = async (result) => {
         }
         return item;
       }) : [];
-  
+
       return { ...column, items: updatedItems };
     });
-  
+
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
     await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
-  
+
     setEditingTaskId(null);
   };
-  
+
 
   const handleCancelEdit = () => {
     setEditingTaskId(null);
@@ -230,13 +231,13 @@ const handleOnDragEnd = async (result) => {
                                         className="update-task-button"
                                         onClick={() => handleEditTask(item.id)}
                                       >
-                                        Edit
+                                        {t('kanbanBoard.edit')}
                                       </button>
                                       <button
                                         className="delete-task-button"
                                         onClick={() => handleDeleteTask(item.id)}
                                       >
-                                        Delete
+                                        {t('kanbanBoard.delete')}
                                       </button>
                                     </div>
                                   </>
@@ -254,12 +255,12 @@ const handleOnDragEnd = async (result) => {
           ))}
       </div>
       <div className="button-container">
-        <button className="json-button" onClick={handleExportData}>Export Data</button>
+        <button className="json-button" onClick={handleExportData}>{t('kanbanBoard.exportData')}</button>
         <input type="file" accept=".json" onChange={handleImportData} ref={fileInputRef} style={{display: 'none'}} />
-        <button className="json-button" onClick={() => fileInputRef.current.click()}>Import Data</button>
+        <button className="json-button" onClick={() => fileInputRef.current.click()}>{t('kanbanBoard.importData')}</button>
       </div>
     </DragDropContext>
   );
 };
 
-export default KanbanBoard;
+export default withTranslation()(KanbanBoard);

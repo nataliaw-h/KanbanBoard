@@ -1,6 +1,7 @@
 import React, { useReducer, useCallback, useMemo, useLayoutEffect, useState } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
+import { withTranslation } from 'react-i18next';
 
 const ACTIONS = {
   SET_TASKS: 'set-tasks',
@@ -15,7 +16,7 @@ const reducer = (state, action) => {
   }
 };
 
-const NotificationsPage = () => {
+const NotificationsPage = ({ t }) => {
   const initialState = { tasks: [] };
   const [state, dispatch] = useReducer(reducer, initialState);
   const [filter, setFilter] = useState('all');
@@ -77,28 +78,29 @@ const NotificationsPage = () => {
 
     return filteredTasks.map((task) => {
       const taskMessage = task.isExpired
-        ? `Expired ${Math.abs(task.daysDifference)} days ago`
-        : `${task.daysDifference} days left`;
+        ? t('notificationsPage.expired', { days: Math.abs(task.daysDifference) })
+        : t('notificationsPage.left', { days: task.daysDifference });
+      const className = task.isExpired ? "bg-red-500 rounded-md p-3 shadow-md" : "bg-blue-500 rounded-md p-3 shadow-md";
       return (
-        <li key={task.id} className={task.isExpired ? "bg-red-500 rounded-md p-3 shadow-md" : "bg-blue-500 rounded-md p-3 shadow-md"}>
+        <li key={task.id} className={className}>
           <span className="text-white font-medium">{task.name}</span>
           <span className="text-white ml-2">({taskMessage})</span>
         </li>
       );
     });
-  }, [state.tasks, filter]);
+  }, [state.tasks, filter, t]);
 
   if (!state.tasks.length) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">{t('notificationsPage.loading')}</div>
       </div>
     );
   }
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 text-center text-blue-500">Notifications</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center text-blue-500">{t('notificationsPage.title')}</h1>
       <div className="flex justify-around mb-4">
         <label>
           <input
@@ -107,7 +109,7 @@ const NotificationsPage = () => {
             checked={filter === 'all'}
             onChange={() => setFilter('all')}
           />
-          All tasks
+          {t('notificationsPage.allTasks')}
         </label>
         <label>
           <input
@@ -116,7 +118,7 @@ const NotificationsPage = () => {
             checked={filter === 'upcoming'}
             onChange={() => setFilter('upcoming')}
           />
-          Upcoming tasks
+          {t('notificationsPage.upcomingTasks')}
         </label>
         <label>
           <input
@@ -125,7 +127,7 @@ const NotificationsPage = () => {
             checked={filter === 'expired'}
             onChange={() => setFilter('expired')}
           />
-          Expired tasks
+          {t('notificationsPage.expiredTasks')}
         </label>
       </div>
       <ul className="space-y-2">{taskElements}</ul>
@@ -133,4 +135,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default withTranslation()(NotificationsPage);

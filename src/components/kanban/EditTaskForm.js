@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { FaRegStar, FaStar } from 'react-icons/fa';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 const EditTaskForm = ({ task, onUpdate, onCancel }) => {
+  const { t } = useTranslation();
   const [taskPriority, setTaskPriority] = useState(task.priority);
 
   const validationSchema = Yup.object().shape({
-    taskName: Yup.string().required('Task name is required.'),
-    taskDescription: Yup.string().required('Task description is required.'),
-    taskExpirationDate: Yup.string().required('Task expiration date is required.'),
+    taskName: Yup.string().required(t('editTaskForm.taskNameRequired')),
+    taskDescription: Yup.string().required(t('editTaskForm.taskDescriptionRequired')),
+    taskExpirationDate: Yup.string().required(t('editTaskForm.taskExpirationDateRequired')),
   });
 
   const handleSubmit = (values) => {
@@ -50,7 +52,7 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
           className="input-field"
           type="text"
           name="taskName"
-          placeholder="Enter task name"
+          placeholder={t('editTaskForm.enterTaskName')}
           maxLength="100"
         />
         <ErrorMessage name="taskName" component="div" className="validation-error" />
@@ -59,7 +61,7 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
           className="input-field"
           component="textarea"
           name="taskDescription"
-          placeholder="Enter task description"
+          placeholder={t('editTaskForm.enterTaskDescription')}
           maxLength="500"
           rows="4"
         />
@@ -69,7 +71,7 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
           className="input-field"
           type="date"
           name="taskExpirationDate"
-          placeholder="Enter task expiration date"
+          placeholder={t('editTaskForm.enterExpirationDate')}
         />
         <ErrorMessage
           name="taskExpirationDate"
@@ -81,10 +83,10 @@ const EditTaskForm = ({ task, onUpdate, onCancel }) => {
 
         <div className="button-container">
           <button type="submit" className="update-task-button">
-            Update Task
+            {t('editTaskForm.updateTaskButton')}
           </button>
           <button type="button" className="cancel-task-button" onClick={onCancel}>
-            Cancel
+            {t('editTaskForm.cancelButton')}
           </button>
         </div>
       </Form>

@@ -15,6 +15,7 @@ import NotificationsPage from './components/notification/NotificationsPage';
 import { auth, db } from './firebase';
 import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { ProjectProvider } from './components/projects//ProjectContext';
 
 import {
   collection,
@@ -32,6 +33,7 @@ import './App.css';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(true); // Initialize loading state
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -45,6 +47,7 @@ function App() {
         setIsLoggedIn(false);
         setEmail('');
       }
+      setLoading(false); // Set loading state to false once auth state is confirmed
     });
 
     return () => {
@@ -127,10 +130,15 @@ function App() {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="app-container">
       <Header isLoggedIn={isLoggedIn} email={email} onLogout={() => signOut(auth)} />
       <div className="content">
+      <ProjectProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={isLoggedIn ? <Navigate to="/" /> : <UserRegistrationForm />} />
@@ -167,6 +175,7 @@ function App() {
             element={isLoggedIn ? <NotificationsPage notifications={notifications} /> : <Navigate to="/login" />}
           />
         </Routes>
+        </ProjectProvider>
       </div>
       <Footer />
     </div>

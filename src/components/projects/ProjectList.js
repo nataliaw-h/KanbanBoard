@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react'; // Import useContext
 import { Link } from 'react-router-dom';
 import './styles/ProjectList.css';
+import { ProjectContext } from './ProjectContext'; // Import ProjectContext
 import { withTranslation } from 'react-i18next';
 
-const ProjectList = ({ projects, onDeleteProject, t }) => {
+const ProjectList = ({ t }) => { // Remove projects and onDeleteProject from props
+  const { projects, handleDeleteProject } = useContext(ProjectContext); // Use values from the context
+
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('');
-
-  const handleDeleteProject = (projectId) => {
-    onDeleteProject(projectId);
-  };
-  
 
   const handleSortChange = (event) => {
     setSortBy(event.target.value);

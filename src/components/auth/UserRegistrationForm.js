@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth'; 
+import useAuth from '../hooks/useAuth';
 import './styles/AuthForm.css';
+import { withTranslation } from 'react-i18next';
 
-const UserRegistrationForm = () => {
+const UserRegistrationForm = ({ t }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // Define setErrorMessage
+  const [errorMessage, setErrorMessage] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
 
   const { signUp } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate password
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
     if (!passwordRegex.test(password)) {
-      setErrorMessage(
-        'Password must contain at least 8 characters, including one uppercase letter, one digit, and one special character.'
-      );
+      setErrorMessage(t('userRegistrationForm.passwordError'));
       return;
     }
 
@@ -27,7 +25,7 @@ const UserRegistrationForm = () => {
     if (success) {
       setIsRegistered(true);
     } else if (error) {
-      setErrorMessage(error); // Set error message if there's an error
+      setErrorMessage(error);
     }
   };
 
@@ -36,11 +34,11 @@ const UserRegistrationForm = () => {
   }
   return (
     <div className="auth-form-container">
-      <h2 className='title'>Registration</h2>
+      <h2 className='title'>{t('userRegistrationForm.title')}</h2>
       <form onSubmit={handleSubmit}>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <div className="form-group">
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">{t('userRegistrationForm.username')}:</label>
           <input
             type="text"
             id="username"
@@ -50,7 +48,7 @@ const UserRegistrationForm = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{t('userRegistrationForm.email')}:</label>
           <input
             type="email"
             id="email"
@@ -60,7 +58,7 @@ const UserRegistrationForm = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">{t('userRegistrationForm.password')}:</label>
           <input
             type="password"
             id="password"
@@ -71,10 +69,10 @@ const UserRegistrationForm = () => {
         </div>
         <div className="button-group">
           <button type="submit" className="login-button">
-            Register
+            {t('userRegistrationForm.register')}
           </button>
           <Link to="/login" className="sign-in-link">
-            <button className="sign-in-button">Sign In</button>
+            <button className="sign-in-button">{t('userRegistrationForm.signIn')}</button>
           </Link>
         </div>
       </form>
@@ -82,4 +80,4 @@ const UserRegistrationForm = () => {
   );
 };
 
-export default UserRegistrationForm;
+export default withTranslation()(UserRegistrationForm);

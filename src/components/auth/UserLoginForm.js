@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth'; // make sure the path is correct
-import './styles/AuthForm.css'
+import useAuth from '../hooks/useAuth';
+import './styles/AuthForm.css';
+import { withTranslation } from 'react-i18next';
 
-const UserLoginForm = () => {
+const UserLoginForm = ({ t }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,11 +34,11 @@ const UserLoginForm = () => {
 
   return (
     <div className="auth-form-container">
-      <h2 className='title'>Login</h2>
+      <h2 className='title'>{t('userLoginForm.title')}</h2>
       <form onSubmit={handleSubmit}>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{t('userLoginForm.email')}:</label>
           <input
             type="email"
             id="email"
@@ -47,7 +48,7 @@ const UserLoginForm = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">{t('userLoginForm.password')}:</label>
           <input
             type="password"
             id="password"
@@ -57,14 +58,14 @@ const UserLoginForm = () => {
           />
         </div>
         <div className="button-group">
-          <button type="submit" className="login-button">Login</button>
+          <button type="submit" className="login-button">{t('userLoginForm.login')}</button>
           <Link to="/register" className="sign-in-link">
-            <button className="sign-in-button">Register</button>
+            <button className="sign-in-button">{t('userLoginForm.register')}</button>
           </Link>
         </div>
         <div>
           <button className="google-login-button" onClick={handleLoginWithGoogle}>
-          <img src="/google_logo.png" alt="Google Logo" className="google-logo" />Login with Google
+            <img src="/google_logo.png" alt="Google Logo" className="google-logo" />{t('userLoginForm.loginWithGoogle')}
           </button>
         </div>
       </form>
@@ -72,4 +73,4 @@ const UserLoginForm = () => {
   );
 };
 
-export default UserLoginForm;
+export default withTranslation()(UserLoginForm);

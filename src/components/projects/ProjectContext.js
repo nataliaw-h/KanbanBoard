@@ -14,10 +14,10 @@ export const ProjectProvider = ({ children }) => {
       setLoading(false);
       return;
     }
-
+  
     const projectsCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
     const projectsQuery = query(projectsCollection, orderBy('createdAt'));
-
+  
     const unsubscribeProjects = onSnapshot(projectsQuery, (snapshot) => {
       const projectsData = [];
       snapshot.forEach((doc) => {
@@ -26,12 +26,12 @@ export const ProjectProvider = ({ children }) => {
       setProjects(projectsData);
       setLoading(false);
     });
-
+  
     return () => {
       unsubscribeProjects();
     };
-  }, []);
-
+  }, [auth.currentUser]);
+  
   const handleAddProject = async (newProject) => {
     try {
       await addDoc(collection(db, `users/${auth.currentUser.uid}/projects`), {

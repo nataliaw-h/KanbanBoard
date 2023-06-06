@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 firebase.js
+.firebase/hosting.YnVpbGQ.cache
+.firebaserc
+.github/workflows/firebase-hosting-pull-request.yml

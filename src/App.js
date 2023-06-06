@@ -33,7 +33,7 @@ import './App.css';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(true); // Initialize loading state
+  const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -47,7 +47,7 @@ function App() {
         setIsLoggedIn(false);
         setEmail('');
       }
-      setLoading(false); // Set loading state to false once auth state is confirmed
+      setLoading(false);
     });
 
     return () => {

@@ -28,7 +28,6 @@ const Home = ({ t }) => {
 
   const handleAnimationComplete = () => {
     setShowAnimation(false);
-    // Delay the text display using a Promise and setTimeout
     const delay = new Promise((resolve) => {
       setTimeout(resolve, 1000);
     });

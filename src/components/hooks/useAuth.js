@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { auth, googleProvider } from '../../firebase'; // make sure the path is correct
+import { auth, googleProvider } from '../../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 
 const useAuth = () => {

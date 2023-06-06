@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react'; // Import useContext
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/ProjectList.css';
-import { ProjectContext } from './ProjectContext'; // Import ProjectContext
+import { ProjectContext } from './ProjectContext';
 import { withTranslation } from 'react-i18next';
 
-const ProjectList = ({ t }) => { // Remove projects and onDeleteProject from props
-  const { projects, handleDeleteProject } = useContext(ProjectContext); // Use values from the context
+const ProjectList = ({ t }) => { 
+  const { projects, handleDeleteProject } = useContext(ProjectContext); 
 
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('');

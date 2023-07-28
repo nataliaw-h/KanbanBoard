@@ -203,3 +203,19 @@
     color: white;
   }
   
+  .limit-warning {
+    font-size: 14px;
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+@media (max-width: 600px) {
+  .kanban-board {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  .button-container {
+    flex-direction: column;
+  }
+}
+  

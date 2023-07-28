@@ -4,20 +4,25 @@ import './styles/ProjectList.css';
 import { ProjectContext } from './ProjectContext';
 import { withTranslation } from 'react-i18next';
 
-const ProjectList = ({ t }) => { 
-  const { projects, handleDeleteProject } = useContext(ProjectContext); 
+const ProjectList = ({ t }) => {
+  // Wykorzystanie kontekstu ProjectContext
+  const { projects, handleDeleteProject } = useContext(ProjectContext);
 
+  // Inicjalizacja stanów sortBy i filterBy
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('');
 
+  // Obsługa zmiany sortowania
   const handleSortChange = (event) => {
     setSortBy(event.target.value);
   };
 
+  // Obsługa zmiany filtracji
   const handleFilterChange = (event) => {
     setFilterBy(event.target.value);
   };
 
+  // Sortowanie projektów
   const sortProjects = (projects) => {
     if (sortBy === 'name-asc') {
       return [...projects].sort((a, b) => a.name.localeCompare(b.name));
@@ -28,10 +33,12 @@ const ProjectList = ({ t }) => {
     }
   };
 
+  // Filtrowanie projektów na podstawie nazwy
   const filteredProjects = projects.filter((project) =>
     project.name.toLowerCase().includes(filterBy.toLowerCase())
   );
 
+  // Sortowanie i filtrowanie projektów
   const sortedProjects = sortProjects(filteredProjects);
 
   return (
@@ -72,11 +79,12 @@ const ProjectList = ({ t }) => {
                   {t('projectList.edit')}
                 </Link>
                 <Link to={`/projects`} className="delete-project-button">
-                <button className="delete-project-button"
-                  onClick={() => handleDeleteProject(project.id)}
-                >
-                  {t('projectList.delete')}
-                </button>
+                  <button
+                    className="delete-project-button"
+                    onClick={() => handleDeleteProject(project.id)}
+                  >
+                    {t('projectList.delete')}
+                  </button>
                 </Link>
               </div>
             </li>
@@ -90,4 +98,5 @@ const ProjectList = ({ t }) => {
   );
 };
 
+// Dodanie tłumaczenia do komponentu
 export default withTranslation()(ProjectList);

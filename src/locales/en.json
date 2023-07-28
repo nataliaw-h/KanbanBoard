@@ -3,7 +3,7 @@
     "header.logout": "Logout",
     "header.projects": "Projects",
     "header.calendar": "Calendar",
-    "header.notifications": "Notifications",
+    "header.notifications": "Task list",
     "header.welcome":"Welcome",
     "header.login":"Sign in",
     "header.signIn": "Create account",
@@ -37,13 +37,13 @@
     "editProjectForm.columns": "Columns",
     "editProjectForm.updateButton": "Update Project",
     "editProjectForm.loading": "Loading...",
-    "notificationsPage.title": "Notifications",
+    "notificationsPage.title": "Task list",
     "notificationsPage.allTasks": "All Tasks",
     "notificationsPage.upcomingTasks": "Upcoming Tasks",
     "notificationsPage.expiredTasks": "Expired Tasks",
     "notificationsPage.expired": "Expired {{days}} days ago",
     "notificationsPage.left": "{{days}} days left",
-    "notificationsPage.loading": "Loading...",
+    "notificationsPage.loading": "No tasks to display",
     "userRegistrationForm.title": "Registration",
     "userRegistrationForm.username": "Username",
     "userRegistrationForm.email": "Email",
@@ -83,6 +83,9 @@
     "calendar.month": "Month",
     "calendar.week": "Week",
     "calendar.day": "Day",
-    "calendar.showMore": ""
+    "calendar.showMore": "",
+    "kanbanBoard.limitExceeded": "The task limit in this column has been exceeded by {{count}}! This may indicate a flow blockage. Please change the limit or move tasks to another column.",
+    "addProjectForm.columnLimit": "Task limit",
+    "home.description": "Welcome to our Kanban board project management application! Our tool will enable you to have full control over your workflow, thanks to an intuitive and flexible board system. Organize tasks and track your progress, all in real-time. Your team's efficiency will soar with better coordination and the ability to focus on the most important tasks. Say goodbye to complicated spreadsheets or cluttered desks – our application will help you take charge of every project, making success effortless. Join us and experience a new dimension of project management effectiveness!"
   }
   

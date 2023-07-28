@@ -10,10 +10,16 @@ import { FaStar } from 'react-icons/fa';
 import { withTranslation } from 'react-i18next';
 
 const KanbanBoard = ({ t }) => {
+  // Pobranie parametrów z URL za pomocą react-router-dom
   const { projectId } = useParams();
+
+  // Stan projektu
   const [project, setProject] = useState(null);
+
+  // Id zadania, które jest obecnie edytowane
   const [editingTaskId, setEditingTaskId] = useState(null);
 
+  // Pobranie projektu z bazy danych na podstawie projectId
   const fetchProject = useCallback(async () => {
     const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
     const projectSnapshot = await getDoc(projectDoc);
@@ -24,36 +30,42 @@ const KanbanBoard = ({ t }) => {
     }
   }, [projectId]);
 
+  // Pobranie projektu po załadowaniu komponentu
   useEffect(() => {
     fetchProject();
   }, [fetchProject]);
 
-
+  // Obsługa zakończenia przeciągania (Drag and Drop)
   const handleOnDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
 
+    // Tworzenie kopii kolumn
     const newColumns = project.columns.map((column) => ({
       ...column,
       items: Array.isArray(column.items) ? [...column.items] : [],
     }));
 
+    // Indeksy kolumn źródłowej i docelowej
     const srcIndex = newColumns.findIndex((col) => col.id === source.droppableId);
     const destIndex = newColumns.findIndex((col) => col.id === destination.droppableId);
 
+    // Usunięcie przenoszonego elementu z kolumny źródłowej i wstawienie go w docelowej
     const [removed] = newColumns[srcIndex].items.splice(source.index, 1);
     newColumns[destIndex].items.splice(destination.index, 0, removed);
 
+    // Aktualizacja stanu projektu i zapisanie zmian w bazie danych
     setProject((prevProject) => ({ ...prevProject, columns: newColumns }));
 
     await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), {
       columns: newColumns,
     });
 
+    // Ponowne pobranie projektu po zakończeniu przeciągania
     fetchProject();
   };
 
-
+  // Dodawanie nowego zadania do odpowiedniej kolumny
   const handleAddTask = async (columnId, taskDetails) => {
     const newTask = {
       id: `task-${Date.now()}`,
@@ -63,6 +75,7 @@ const KanbanBoard = ({ t }) => {
       expirationDate: taskDetails.expirationDate,
     };
 
+    // Aktualizacja stanu projektu
     setProject((prevProject) => {
       const updatedColumns = prevProject.columns.map((column) => {
         if (column.id === columnId) {
@@ -79,6 +92,7 @@ const KanbanBoard = ({ t }) => {
       return { ...prevProject, columns: updatedColumns };
     });
 
+    // Aktualizacja projektu w bazie danych
     const updatedProject = {
       ...project,
       columns: project.columns.map(column => {
@@ -94,6 +108,7 @@ const KanbanBoard = ({ t }) => {
     await updateDoc(projectDoc, updatedProject);
   };
 
+  // Obsługa edycji zadania
   const handleEditTask = (taskId) => {
     if (editingTaskId === taskId) {
       setEditingTaskId(null);
@@ -102,6 +117,7 @@ const KanbanBoard = ({ t }) => {
     }
   };
 
+  // Aktualizacja zadania
   const handleUpdateTask = async (updatedTask) => {
     const updatedColumns = project.columns.map((column) => {
       const updatedItems = column.items ? column.items.map((item) => {
@@ -114,27 +130,36 @@ const KanbanBoard = ({ t }) => {
       return { ...column, items: updatedItems };
     });
 
+    // Aktualizacja stanu projektu
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
+
+    // Aktualizacja projektu w bazie danych
     await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
 
+    // Zakończenie edycji zadania
     setEditingTaskId(null);
   };
 
-
+  // Anulowanie edycji zadania
   const handleCancelEdit = () => {
     setEditingTaskId(null);
   };
 
+  // Usuwanie zadania
   const handleDeleteTask = async (taskId) => {
     const updatedColumns = project.columns.map((column) => {
       const updatedItems = column.items.filter((item) => item.id !== taskId);
       return { ...column, items: updatedItems };
     });
 
+    // Aktualizacja stanu projektu
     setProject((prevProject) => ({ ...prevProject, columns: updatedColumns }));
+
+    // Aktualizacja projektu w bazie danych
     await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId), { columns: updatedColumns });
   };
 
+  // Sprawdzenie, czy zadanie jest bliskie terminu ważności
   const isTaskNearDueDate = (task) => {
     const currentDate = new Date();
     const expirationDate = new Date(task.expirationDate);
@@ -143,14 +168,17 @@ const KanbanBoard = ({ t }) => {
     return daysDifference <= 7;
   };
 
+  // Sprawdzenie, czy zadanie jest po terminie ważności
   const isTaskPastDueDate = (task) => {
     const currentDate = new Date();
     const expirationDate = new Date(task.expirationDate);
     return expirationDate < currentDate;
   };
 
+  // Referencja do elementu input typu "file" (importowanie/eksportowanie danych)
   const fileInputRef = useRef();
 
+  // Eksportowanie danych projektu do pliku JSON
   const handleExportData = async () => {
     const dataStr = JSON.stringify(project);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -162,36 +190,45 @@ const KanbanBoard = ({ t }) => {
     linkElement.click();
   };
 
+  // Importowanie danych projektu z pliku JSON
   const handleImportData = async (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = async (e) => {
       const data = JSON.parse(e.target.result);
-      // update the data to Firestore
+      // Aktualizacja danych w bazie danych Firestore
       const projectDoc = doc(db, `users/${auth.currentUser.uid}/projects`, projectId);
       await updateDoc(projectDoc, data);
+      // Ponowne pobranie projektu
       fetchProject();
     };
     reader.readAsText(file);
     fileInputRef.current.value = '';
   };
 
+  // Jeżeli projekt nie jest załadowany, wyświetl napis "Loading..."
   if (!project) {
     return <div>Loading...</div>;
   }
 
+  // Renderowanie komponentu
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <div className="kanban-board">
-        {project.columns &&
-          project.columns.map((column, columnIndex) => (
-            <div key={columnIndex} className="kanban-column">
-              <h3 className="kanban-column-title">{column.name}</h3>
-              <AddTaskForm columnId={column.id} onAdd={handleAddTask} />
-              <Droppable droppableId={column.id}>
-                {(provided) => (
-                  <ul className="tasks" {...provided.droppableProps} ref={provided.innerRef}>
-                    {column.items &&
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <div className="kanban-board">
+          {project.columns &&
+            project.columns.map((column, columnIndex) => (
+              <div key={columnIndex} className="kanban-column">
+                <h3 className="kanban-column-title">{column.name}</h3>
+                {column.limit && column.items && column.limit < column.items.length && (
+                <div className="limit-warning">
+                  {t('kanbanBoard.limitExceeded', { count: column.items.length - column.limit })}
+                </div>
+                  )}
+                <AddTaskForm columnId={column.id} onAdd={handleAddTask} />
+                <Droppable droppableId={column.id}>
+                  {(provided) => (
+                    <ul className="tasks" {...provided.droppableProps} ref={provided.innerRef}>
+                      {column.items &&
                       column.items.map((item, itemIndex) => {
                         const isNearDueDate = isTaskNearDueDate(item);
                         const isPastDueDate = isTaskPastDueDate(item);

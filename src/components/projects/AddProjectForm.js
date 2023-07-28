@@ -8,21 +8,21 @@ import { withTranslation } from 'react-i18next';
 const AddProjectForm = ({ t }) => {
   const { handleAddProject } = useContext(ProjectContext);
   const [projectName, setProjectName] = useState('');
-  const [columns, setColumns] = useState([{ id: uuidv4(), name: '', required: true }]);
+  const [columns, setColumns] = useState([{ id: uuidv4(), name: '', limit: null, required: true }]);
 
   const handleProjectNameChange = (e) => {
     setProjectName(e.target.value);
   };
 
-  const handleColumnChange = (e, index) => {
+  const handleColumnChange = (e, index, field) => {
     const updatedColumns = [...columns];
-    updatedColumns[index].name = e.target.value;
+    updatedColumns[index][field] = e.target.value;
     setColumns(updatedColumns);
   };
 
   const addColumn = () => {
     if (columns.length < 6) {
-      setColumns([...columns, { id: uuidv4(), name: '', required: false }]);
+      setColumns([...columns, { id: uuidv4(), name: '', limit: null, required: false }]);
     }
   };
 
@@ -41,7 +41,10 @@ const AddProjectForm = ({ t }) => {
 
     const newProject = {
       name: projectName,
-      columns: columns.filter((column) => column.name.trim() !== ''),
+      columns: columns.filter((column) => column.name.trim() !== '').map(column => ({
+        ...column,
+        limit: column.limit ? Number(column.limit) : null
+      })),
       createdAt: serverTimestamp(),
     };
 
@@ -53,7 +56,7 @@ const AddProjectForm = ({ t }) => {
     }
 
     setProjectName('');
-    setColumns([{ id: uuidv4(), name: '', required: true }]);
+    setColumns([{ id: uuidv4(), name: '', limit: null, required: true }]);
   };
 
   return (
@@ -66,20 +69,26 @@ const AddProjectForm = ({ t }) => {
       <div className="form-group">
         <label>{t('addProjectForm.columns')}:</label>
         {columns.map((column, index) => (
-          <div key={index} className="column-input">
-            <input
-              type="text"
-              value={column.name}
-              onChange={(e) => handleColumnChange(e, index)}
-              required={column.required}
-            />
-            {index > 0 && (
-              <button type="button" className="remove-button" onClick={() => removeColumn(index)}>
-                &minus;
-              </button>
-            )}
-          </div>
-        ))}
+  <div key={index} className="column-input">
+    <input
+      type="text"
+      value={column.name}
+      onChange={(e) => handleColumnChange(e, index, 'name')}
+      required={column.required}
+    />
+    <input
+      type="number"
+      value={column.limit || ''}
+      onChange={(e) => handleColumnChange(e, index, 'limit')}
+      placeholder={t('addProjectForm.columnLimit')}
+    />
+    {index > 0 && (
+      <button type="button" className="remove-button" onClick={() => removeColumn(index)}>
+        &minus;
+      </button>
+    )}
+  </div>
+))}
         <button type="button" className="add-column-button" onClick={addColumn}>
           {t('addProjectForm.addColumn')}
         </button>

@@ -5,7 +5,6 @@ import './styles/AuthForm.css';
 import { withTranslation } from 'react-i18next';
 
 const UserRegistrationForm = ({ t }) => {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -21,7 +20,7 @@ const UserRegistrationForm = ({ t }) => {
       return;
     }
 
-    const { success, error } = await signUp(username, email, password);
+    const { success, error } = await signUp(email, password);
     if (success) {
       setIsRegistered(true);
     } else if (error) {
@@ -37,16 +36,6 @@ const UserRegistrationForm = ({ t }) => {
       <h2 className='title'>{t('userRegistrationForm.title')}</h2>
       <form onSubmit={handleSubmit}>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
-        <div className="form-group">
-          <label htmlFor="username">{t('userRegistrationForm.username')}:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
         <div className="form-group">
           <label htmlFor="email">{t('userRegistrationForm.email')}:</label>
           <input

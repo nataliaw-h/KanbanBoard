@@ -32,6 +32,15 @@ const EditProjectForm = ({ t }) => {
     }));
   };
 
+  const handleLimitChange = (e, columnIndex) => {
+    const updatedColumns = [...project.columns];
+    updatedColumns[columnIndex].limit = e.target.value;
+    setProject((prevProject) => ({
+      ...prevProject,
+      columns: updatedColumns,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!project) return;
@@ -70,6 +79,12 @@ const EditProjectForm = ({ t }) => {
               value={column.name}
               onChange={(e) => handleColumnChange(e, index)}
               required
+            />
+            <input
+              type="number"
+              value={column.limit || ''}
+              onChange={(e) => handleLimitChange(e, index)}
+              placeholder={t('addProjectForm.columnLimit')}
             />
           </div>
         ))}

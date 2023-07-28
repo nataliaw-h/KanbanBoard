@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { auth, googleProvider } from '../../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 
 const useAuth = () => {
   const [errorMessage, setErrorMessage] = useState('');
-  
+
   const signIn = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -14,11 +14,10 @@ const useAuth = () => {
       return { success: false, error: error.message };
     }
   };
-  
-  const signUp = async (username, email, password) => {
+
+  const signUp = async (email, password) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: username });
+      await createUserWithEmailAndPassword(auth, email, password);
       return { success: true };
     } catch (error) {
       setErrorMessage(error.message);

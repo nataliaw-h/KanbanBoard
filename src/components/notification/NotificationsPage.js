@@ -4,27 +4,27 @@ import { auth, db } from '../../firebase';
 import { withTranslation } from 'react-i18next';
 
 const ACTIONS = {
-  SET_TASKS: 'set-tasks',
+  SET_TASKS: 'set-tasks', // Akcja do ustawienia listy zadań
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.SET_TASKS:
-      return { ...state, tasks: action.payload };
+      return { ...state, tasks: action.payload }; // Aktualizacja stanu o nową listę zadań
     default:
       return state;
   }
 };
 
 const NotificationsPage = ({ t }) => {
-  const initialState = { tasks: [] };
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [filter, setFilter] = useState('all');
+  const initialState = { tasks: [] }; // Początkowy stan zawierający pustą listę zadań
+  const [state, dispatch] = useReducer(reducer, initialState); // Użycie reducera do zarządzania stanem
+  const [filter, setFilter] = useState('all'); // Stan do przechowywania wybranego filtra
 
   const fetchTasks = useCallback(() => {
     let unsubscribe;
-    const tasksCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
-    unsubscribe = onSnapshot(tasksCollection, (snapshot) => {
+    const tasksCollection = collection(db, `users/${auth.currentUser.uid}/projects`); // Referencja do kolekcji zadań użytkownika
+    unsubscribe = onSnapshot(tasksCollection, (snapshot) => { // Subskrypcja zmian w wynikach zapytania do bazy danych
       const tasksData = [];
       snapshot.forEach((doc) => {
         const projectData = doc.data();
@@ -32,7 +32,7 @@ const NotificationsPage = ({ t }) => {
           projectData.columns.forEach((column) => {
             if (column.items) {
               column.items.forEach((item) => {
-                tasksData.push(item);
+                tasksData.push(item); // Dodanie poszczególnych zadań do tasksData
               });
             }
           });
@@ -45,12 +45,12 @@ const NotificationsPage = ({ t }) => {
         const timeDifference = expirationDate.getTime() - currentDate.getTime();
         const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
         const isExpired = daysDifference < 0;
-        return { ...task, daysDifference, isExpired };
+        return { ...task, daysDifference, isExpired }; // Dodanie informacji o dniach różnicy i czy zadanie jest przeterminowane
       });
 
-      filteredTasks.sort((a, b) => a.daysDifference - b.daysDifference);
+      filteredTasks.sort((a, b) => a.daysDifference - b.daysDifference); // Sortowanie zadań według różnicy dni
 
-      dispatch({ type: ACTIONS.SET_TASKS, payload: filteredTasks });
+      dispatch({ type: ACTIONS.SET_TASKS, payload: filteredTasks }); // Wywołanie akcji SET_TASKS z zaktualizowaną listą zadań
     });
     return unsubscribe;
   }, []);
@@ -59,27 +59,27 @@ const NotificationsPage = ({ t }) => {
     let unsubscribe;
 
     if (auth.currentUser) {
-      unsubscribe = fetchTasks();
+      unsubscribe = fetchTasks(); // Wywołanie funkcji fetchTasks przy renderowaniu komponentu lub zmianie użytkownika
     }
 
     return () => {
       if (unsubscribe) {
-        unsubscribe();
+        unsubscribe(); // Odsubskrybowanie zmian przy zniszczeniu komponentu
       }
     };
   }, [fetchTasks]);
 
   const taskElements = useMemo(() => {
     const filteredTasks = state.tasks.filter((task) => {
-      if (filter === 'expired') return task.isExpired;
-      if (filter === 'upcoming') return !task.isExpired && task.daysDifference <= 7;
+      if (filter === 'expired') return task.isExpired; // Filtrowanie przeterminowanych zadań
+      if (filter === 'upcoming') return !task.isExpired && task.daysDifference <= 7; // Filtrowanie zbliżających się zadań (do 7 dni)
       return true;
     });
 
     return filteredTasks.map((task) => {
       const taskMessage = task.isExpired
-        ? t('notificationsPage.expired', { days: Math.abs(task.daysDifference) })
-        : t('notificationsPage.left', { days: task.daysDifference });
+        ? t('notificationsPage.expired', { days: Math.abs(task.daysDifference) }) // Wiadomość dla przeterminowanych zadań
+        : t('notificationsPage.left', { days: task.daysDifference }); // Wiadomość dla zbliżających się zadań
       const className = task.isExpired ? "bg-red-500 rounded-md p-3 shadow-md" : "bg-blue-500 rounded-md p-3 shadow-md";
       return (
         <li key={task.id} className={className}>
@@ -107,7 +107,7 @@ const NotificationsPage = ({ t }) => {
             type="radio"
             value="all"
             checked={filter === 'all'}
-            onChange={() => setFilter('all')}
+            onChange={() => setFilter('all')} // Zmiana filtra na 'all'
           />
           {t('notificationsPage.allTasks')}
         </label>
@@ -116,7 +116,7 @@ const NotificationsPage = ({ t }) => {
             type="radio"
             value="upcoming"
             checked={filter === 'upcoming'}
-            onChange={() => setFilter('upcoming')}
+            onChange={() => setFilter('upcoming')} // Zmiana filtra na 'upcoming'
           />
           {t('notificationsPage.upcomingTasks')}
         </label>
@@ -125,7 +125,7 @@ const NotificationsPage = ({ t }) => {
             type="radio"
             value="expired"
             checked={filter === 'expired'}
-            onChange={() => setFilter('expired')}
+            onChange={() => setFilter('expired')} // Zmiana filtra na 'expired'
           />
           {t('notificationsPage.expiredTasks')}
         </label>

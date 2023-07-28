@@ -7,6 +7,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/en-gb';
 import 'moment/locale/pl';
+import './styles/calendar.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -56,8 +57,7 @@ const TaskCalendar = () => {
   }, [i18n.language]);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-blue-200">
-      <div className="w-1/2 p-4 rounded-lg bg-blue-400">
+      <div className="calendar">
         <Calendar
           key={calendarKey}
           localizer={localizer}
@@ -83,7 +83,6 @@ const TaskCalendar = () => {
           }}
         />
       </div>
-    </div>
   );
 };
 

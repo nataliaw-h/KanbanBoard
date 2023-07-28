@@ -3,8 +3,6 @@ import './styles/AuthButton.css';
 
 const LogoutButton = () => {
   const handleLogout = () => {
-    // Logika obsługi wylogowania użytkownika
-    // np. wywołanie API, czyszczenie sesji, itp.
     console.log('Wyloguj użytkownika');
   };
 

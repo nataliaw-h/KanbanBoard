@@ -5,11 +5,16 @@ import './styles/Home.css';
 import { withTranslation } from 'react-i18next';
 
 const Home = ({ t }) => {
+  // Utworzenie referencji do kontenera animacji
   const animationContainerRef = useRef(null);
+
+  // Inicjalizacja stanów
   const [showAnimation, setShowAnimation] = useState(true);
-  const [showText, setShowText] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   useEffect(() => {
+    // Załadowanie animacji przy użyciu biblioteki lottie-web
     const anim = lottie.loadAnimation({
       container: animationContainerRef.current,
       renderer: 'svg',
@@ -18,22 +23,25 @@ const Home = ({ t }) => {
       animationData: animationData
     });
 
+    // Dodanie nasłuchiwacza na zdarzenie 'complete' animacji
     anim.addEventListener('complete', handleAnimationComplete);
 
+    // Czyszczenie efektu ubocznego
     return () => {
       anim.removeEventListener('complete', handleAnimationComplete);
       anim.destroy();
     };
   }, []);
 
+  // Obsługa zakończenia animacji
   const handleAnimationComplete = () => {
     setShowAnimation(false);
-    const delay = new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
-    delay.then(() => {
-      setShowText(true);
-    });
+    setTimeout(() => {
+      setShowWelcome(true);
+    }, 1000); 
+    setTimeout(() => {
+      setShowDescription(true);
+    }, 1000);
   };
 
   return (
@@ -41,8 +49,11 @@ const Home = ({ t }) => {
       {showAnimation && (
         <div ref={animationContainerRef} id="animationContainer"></div>
       )}
-      {showText && (
+      {showWelcome && (
         <p className="text-after-animation">{t('home.welcome')}</p>
+      )}
+      {showDescription && (
+        <p className="description">{t('home.description')}</p>
       )}
     </div>
   );

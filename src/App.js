@@ -31,6 +31,7 @@ import {
 import './App.css';
 
 function App() {
+  // Stan aplikacji
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,9 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
+  // Efekt wywoływany przy renderowaniu komponentu
   useEffect(() => {
+    // Sprawdza, czy użytkownik jest zalogowany
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
@@ -51,18 +54,22 @@ function App() {
     });
 
     return () => {
+      // Czyszczenie efektu
       unsubscribe();
     };
   }, []);
 
   useEffect(() => {
+    // Efekt wywoływany, gdy zmienia się stan isLoggedIn
     if (!isLoggedIn) {
+      // Jeśli użytkownik jest wylogowany, czyści stan projektów, zadań i powiadomień
       setProjects([]);
       setTasks([]);
       setNotifications([]);
       return;
     }
 
+    // Pobieranie listy projektów użytkownika z bazy danych
     const projectsCollection = collection(db, `users/${auth.currentUser.uid}/projects`);
     const projectsQuery = query(projectsCollection, orderBy('createdAt'));
 
@@ -74,6 +81,7 @@ function App() {
       setProjects(projectsData);
     });
 
+    // Pobieranie listy zadań użytkownika z bazy danych
     const tasksCollection = collection(db, `users/${auth.currentUser.uid}/tasks`);
     const tasksQuery = query(tasksCollection, orderBy('expirationDate'));
 
@@ -85,6 +93,7 @@ function App() {
       setTasks(tasksData);
     });
 
+    // Pobieranie listy powiadomień użytkownika z bazy danych
     const notificationsCollection = collection(db, `users/${auth.currentUser.uid}/notifications`);
     const notificationsQuery = query(notificationsCollection);
 
@@ -97,12 +106,14 @@ function App() {
     });
 
     return () => {
+      // Czyszczenie efektów
       unsubscribeProjects();
       unsubscribeTasks();
       unsubscribeNotifications();
     };
   }, [isLoggedIn]);
 
+  // Obsługa dodawania projektu
   const handleAddProject = async (newProject) => {
     try {
       await addDoc(collection(db, `users/${auth.currentUser.uid}/projects`), {
@@ -114,6 +125,7 @@ function App() {
     }
   };
 
+  // Obsługa usuwania projektu
   const handleDeleteProject = async (projectId) => {
     try {
       await deleteDoc(doc(db, `users/${auth.currentUser.uid}/projects`, projectId));
@@ -122,6 +134,7 @@ function App() {
     }
   };
 
+  // Obsługa edycji projektu
   const handleEditProject = async (updatedProject) => {
     try {
       await updateDoc(doc(db, `users/${auth.currentUser.uid}/projects`, updatedProject.id), updatedProject);
@@ -130,6 +143,7 @@ function App() {
     }
   };
 
+  // Renderowanie komponentu
   if (loading) {
     return <div>Loading...</div>;
   }

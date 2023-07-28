@@ -1,26 +1,54 @@
+.text-after-animation {
+  font-size: 100px;
+  color: blue;
+  text-align: center;
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 2s;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-top: 20px;
+}
 
-
-  .text-after-animation {
-    font-size: 100px;
-    color: blue;
-    text-align: center;
+@keyframes fade-in {
+  0% {
     opacity: 0;
-    animation-name: fade-in;
-    animation-duration: 2s;
-    animation-delay: 0.5s;
-    animation-fill-mode: forwards;
-    font-weight: bold;
-    font-family: Arial, Helvetica, sans-serif;
-    padding-top: 20px;
   }
-  
-  @keyframes fade-in {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+  100% {
+    opacity: 1;
   }
-  
-  
+}
+
+@media (max-width: 600px) {
+  .text-after-animation {
+    font-size: 30px; 
+    padding-top: 5px;
+  }
+}
+
+.description {
+  font-size: 20px;
+  color: #004aad;
+  text-align: justify;
+  margin-top: 20px;
+  font-weight: bold;
+  width: 60%;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 2s;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@media (max-width: 600px) {
+  .description {
+    font-size: 10px;
+    margin-top: 10px;
+  }
+}
+

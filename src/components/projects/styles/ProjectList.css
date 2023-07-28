@@ -88,3 +88,26 @@ body{
   .title{
     font-size: 20px;
   }
+
+@media (max-width: 600px) {
+  .project-item {
+    flex-direction: column;
+  }
+  
+  .project-name {
+    margin-bottom: 10px;
+  }
+  
+  .project-actions a,
+  .project-actions button {
+    width: 100%;
+    text-align: center;
+    margin: 5px 5px;
+    font-size: 16px;
+    height: 70px;
+  }
+
+  .project-actions {
+    margin: 10px 0;
+  }
+}

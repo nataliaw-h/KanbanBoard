@@ -3,7 +3,7 @@
     "header.logout": "Wyloguj",
     "header.projects": "Projekty",
     "header.calendar": "Kalendarz",
-    "header.notifications": "Powiadomienia",
+    "header.notifications": "Lista zadań",
     "header.welcome":"Witaj",
     "header.login":"Zaloguj",
     "header.signIn": "Stwórz konto",
@@ -36,13 +36,13 @@
     "editProjectForm.columns": "Kolumny",
     "editProjectForm.updateButton": "Zaktualizuj projekt",
     "editProjectForm.loading": "Ładowanie...",
-    "notificationsPage.title": "Powiadomienia",
+    "notificationsPage.title": "Lista zadań",
     "notificationsPage.allTasks": "Wszystkie zadania",
     "notificationsPage.upcomingTasks": "Nadchodzące zadania",
     "notificationsPage.expiredTasks": "Wygasłe zadania",
     "notificationsPage.expired": "Przedawnione zadanie, minęło {{days}} dni",
     "notificationsPage.left": "{{days}} dni do zakończenia zadania",
-    "notificationsPage.loading": "Ładowanie...",
+    "notificationsPage.loading": "Bark zadań do wyświetlenia",
     "userRegistrationForm.title": "Rejestracja",
     "userRegistrationForm.username": "Nazwa użytkownika",
     "userRegistrationForm.email": "Email",
@@ -82,6 +82,9 @@
     "calendar.month": "Miesiąc",
     "calendar.week": "Tydzień",
     "calendar.day": "Dzień",
-    "calendar.showMore": ""
+    "calendar.showMore": "",
+    "addProjectForm.columnLimit": "Limit zadań",
+    "home.description": "Witaj w naszej aplikacji do zarządzania projektem za pomocą tablic Kanban! Nasze narzędzie umożliwi Ci w pełni kontrolować przebieg pracy, dzięki intuicyjnemu i elastycznemu systemowi tablic. Organizuj zadania i śledź postępy swojej pracy, a to wszystko w czasie rzeczywistym. Wydajność Twojego zespołu wzrośnie dzięki lepszej koordynacji i możliwości skoncentrowania się na najważniejszych zadaniach. Zapomnij o skomplikowanych arkuszach kalkulacyjnych czy bałaganie na biurku – nasza aplikacja pozwoli Ci zapanować nad każdym projektem, dzięki czemu osiągniesz sukces z łatwością. Dołącz do nas i doświadcz nowego wymiaru efektywności w zarządzaniu projektami!",
+    "kanbanBoard.limitExceeded": "Limit zadań w kolumnie został przekroczony o {{count}}! Może to oznaczać blokadę przepływu. Zmień limit lub przesuń zadania do innej kolumny." 
   }
   

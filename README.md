@@ -8,10 +8,6 @@ Tasks from all user projects are not only arranged in their respective Kanban bo
 
 A unique feature is the colour-coding of tasks. Depending on the time remaining until the task deadline, tasks are displayed in different colors. This visual representation aids users in easily identifying urgent and upcoming tasks, thereby promoting efficient time management.
 
-### Live Demo
-
-The application is live at: https://kanboard-776fe.web.app/
-
 ### Features
 
 - Multi-language support (Polish and English)
